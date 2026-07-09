@@ -94,4 +94,4 @@
   <script src="<?php echo e(asset('js/app.js')); ?>"></script>
 </body>
 </html>
-<?php /**PATH C:\Users\dhary\Documents\attendance_webbase_system\attendance_laravel\resources\views/login.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\Jemimah Zamoranos\Documents\attendance-web-based-system\resources\views/login.blade.php ENDPATH**/ ?>

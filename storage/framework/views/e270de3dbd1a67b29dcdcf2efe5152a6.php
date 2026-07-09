@@ -200,9 +200,41 @@
                     <option value="CREATE_INCIDENT_REPORT">Report Incident</option><option value="UPDATE_INCIDENT_REPORT">Update Incident</option>
                     <option value="DELETE_INCIDENT_REPORT">Delete Incident</option>
                   </select>
-                  <input type="date" id="alDateFrom" class="al-date-input" title="From date">
-                  <span class="al-date-sep">to</span>
-                  <input type="date" id="alDateTo" class="al-date-input" title="To date">
+                  
+                  
+                  <select id="alMonthFilter" class="al-select" title="Filter by month">
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+
+                  
+                  
+                  <select id="alYearFilter" class="al-select" title="Filter by year">
+                    <option value="">All Years</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                    <option value="2031">2031</option>
+                    <option value="2032">2032</option>
+                    <option value="2033">2033</option>
+                    <option value="2034">2034</option>
+                    <option value="2035">2035</option>
+                    <option value="2036">2036</option>
+                  </select>
+
                   <button class="al-refresh-btn" id="alRefresh" title="Refresh"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg></button>
                 </div>
               </div>
@@ -267,16 +299,59 @@
   </div>
 
   <!-- ========== ARCHIVE LOGS MODAL ========== -->
+  
   <div class="modal-overlay" id="archiveModal">
     <div class="modal">
       <div class="modal-title">Archive Old Logs</div>
       <div class="modal-fields">
-        <div><label>Archive logs older than</label><select id="archiveDays" style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:7px;font-size:13.5px;font-family:var(--font);"><option value="30">30 days</option><option value="60">60 days</option><option value="90" selected>90 days</option><option value="180">180 days</option><option value="365">1 year</option></select></div>
-        <div style="font-size:12.5px;color:#6b7280;line-height:1.5;margin-top:4px;">This will permanently remove old logs to improve performance. Make sure to export important data first.</div>
+
+        
+        <div>
+          <label>Archive logs older than</label>
+          <select id="archiveDays" style="width:100%;padding:10px 12px;border:1.5px solid #d1d5db;border-radius:7px;font-size:13.5px;font-family:var(--font);">
+            <option value="30">30 days</option>
+            <option value="60">60 days</option>
+            <option value="90" selected>90 days</option>
+            <option value="180">180 days</option>
+            <option value="365">1 year</option>
+            
+            <option value="delete_all">Delete Permanently</option>
+          </select>
+        </div>
+
+        
+        <div style="font-size:12.5px;color:#6b7280;line-height:1.5;margin-top:4px;">
+          This will permanently remove old logs to improve performance. Make sure to export important data first.
+        </div>
+
+        
+        <div id="archivePermWarn" style="display:none;margin-top:8px;padding:8px 12px;background:#fef2f2;border:1.5px solid #fca5a5;border-radius:7px;font-size:12.5px;font-weight:600;color:#b91c1c;line-height:1.5;">
+          ⚠ This action is permanent. All activity logs will be deleted and cannot be recovered.
+        </div>
+
       </div>
-      <div class="modal-footer"><button class="btn-cancel" id="archiveCancel">Cancel</button><button class="btn-confirm" id="archiveConfirm">Archive &amp; Remove</button></div>
+
+      
+      <div class="modal-footer">
+        <button class="btn-cancel" id="archiveCancel">Cancel</button>
+        <button class="btn-confirm" id="archiveConfirm">Archive &amp; Remove</button>
+      </div>
     </div>
   </div>
+
+  
+  <style>
+    /* Applied to #archiveConfirm when "Delete Permanently" is selected */
+    .btn-confirm--danger {
+      background: #dc2626 !important;
+      border-color: #dc2626 !important;
+      color: #fff !important;
+    }
+    .btn-confirm--danger:hover {
+      background: #b91c1c !important;
+      border-color: #b91c1c !important;
+    }
+  </style>
 
   <div class="toast" id="toast"></div>
 
@@ -286,4 +361,4 @@
   <script src="<?php echo e(asset('js/settings.js')); ?>"></script>
 </body>
 </html>
-<?php /**PATH C:\Users\dhary\Documents 3rd\attendance_webbased_system\attendance_laravel\resources\views/settings.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\Jemimah Zamoranos\Documents\attendance-web-based-system\resources\views/settings.blade.php ENDPATH**/ ?>

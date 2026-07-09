@@ -260,4 +260,4 @@
   <script src="<?php echo e(asset('js/timerecord.js')); ?>"></script>
 </body>
 </html>
-<?php /**PATH C:\Users\dhary\Documents\attendance_webbase_system\attendance_laravel\resources\views/timerecord.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\Jemimah Zamoranos\Documents\attendance-web-based-system\resources\views/timerecord.blade.php ENDPATH**/ ?>

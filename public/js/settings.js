@@ -363,8 +363,13 @@ let alPage     = 1;
 let alTotal    = 0;
 let alSearch   = '';
 let alAction   = '';
-let alFrom     = '';
-let alTo       = '';
+let alFrom     = ''; // YYYY-MM-DD start of the selected month/year range (built from dropdowns)
+let alTo       = ''; // YYYY-MM-DD end   of the selected month/year range (built from dropdowns)
+
+// Stores the currently selected month (1–12) and year (e.g. 2026).
+// Both default to empty string, meaning no date filter is applied.
+let alMonth = '';
+let alYear  = '';
 
 // Action label map — converts DB action codes to friendly display text
 const ACTION_LABELS = {
@@ -494,6 +499,52 @@ function renderAlPagination() {
   container.appendChild(info);
 }
 
+// ---- applyMonthYearFilter ----
+// Converts the selected month and year dropdowns into ISO date strings
+// (YYYY-MM-DD) that the API accepts as "from" and "to" parameters.
+//
+// Logic:
+//   - If BOTH a month and a year are selected → compute the first and
+//     last day of that month and assign them to alFrom / alTo so the
+//     API returns only logs that fall within that single month.
+//   - If only a YEAR is selected (no month) → set alFrom to Jan 1 of
+//     that year and alTo to Dec 31, filtering the entire year.
+//   - If only a MONTH is selected (no year) → ignore it; we cannot
+//     build a meaningful date range without a year.
+//   - If neither is selected → clear both alFrom and alTo so all logs
+//     are shown regardless of date.
+//
+// After computing the range, alPage is reset to 1 and the table reloads.
+function applyMonthYearFilter() {
+  if (alMonth && alYear) {
+    // Both dropdowns have a value — filter to a specific month in a specific year.
+    // Pad the month to two digits for a valid YYYY-MM-DD string.
+    const paddedMonth = String(alMonth).padStart(2, '0');
+
+    // First day of the selected month
+    alFrom = `${alYear}-${paddedMonth}-01`;
+
+    // Last day: use day 0 of the NEXT month, which is the last day of THIS month.
+    // e.g. new Date(2026, 2, 0) → Feb 28/29 depending on leap year.
+    const lastDay = new Date(parseInt(alYear), parseInt(alMonth), 0).getDate();
+    alTo   = `${alYear}-${paddedMonth}-${String(lastDay).padStart(2, '0')}`;
+
+  } else if (alYear && !alMonth) {
+    // Only a year is selected — filter the entire calendar year.
+    alFrom = `${alYear}-01-01`;
+    alTo   = `${alYear}-12-31`;
+
+  } else {
+    // No complete selection — remove the date range filter entirely.
+    alFrom = '';
+    alTo   = '';
+  }
+
+  // Reset to page 1 whenever the filter changes so results start fresh
+  alPage = 1;
+  loadActivityLogs();
+}
+
 // ---- Fetch logs from API ----
 async function loadActivityLogs() {
   try {
@@ -532,16 +583,23 @@ document.getElementById('alActionFilter').addEventListener('change', (e) => {
   loadActivityLogs();
 });
 
-document.getElementById('alDateFrom').addEventListener('change', (e) => {
-  alFrom = e.target.value;
-  alPage = 1;
-  loadActivityLogs();
+// ---- Month / Year dropdown filter listeners ----
+// When either dropdown changes we rebuild the alFrom / alTo date strings
+// and reload the logs.  Both dropdowns must have a value before a date
+// range is applied; if either is blank the range filter is cleared.
+
+document.getElementById('alMonthFilter').addEventListener('change', (e) => {
+  // Store the selected month number (empty string = all months)
+  alMonth = e.target.value;
+  // Rebuild the from/to date range and refresh the table
+  applyMonthYearFilter();
 });
 
-document.getElementById('alDateTo').addEventListener('change', (e) => {
-  alTo   = e.target.value;
-  alPage = 1;
-  loadActivityLogs();
+document.getElementById('alYearFilter').addEventListener('change', (e) => {
+  // Store the selected year (empty string = all years)
+  alYear = e.target.value;
+  // Rebuild the from/to date range and refresh the table
+  applyMonthYearFilter();
 });
 
 document.getElementById('alRefresh').addEventListener('click', () => {
@@ -666,12 +724,16 @@ document.getElementById('exportConfirm').addEventListener('click', () => {
 });
 
 // ---- Archive Logs ----
+
+// Both the header "Archive" button and the warning-banner shortcut open the same modal.
 document.getElementById('alArchiveBtn').addEventListener('click', () => {
   document.getElementById('archiveModal').classList.add('show');
 });
 document.getElementById('alWarnArchiveBtn').addEventListener('click', () => {
   document.getElementById('archiveModal').classList.add('show');
 });
+
+// Close the modal when Cancel is clicked or the overlay backdrop is clicked.
 document.getElementById('archiveCancel').addEventListener('click', () => {
   document.getElementById('archiveModal').classList.remove('show');
 });
@@ -679,8 +741,82 @@ document.getElementById('archiveModal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('archiveModal'))
     document.getElementById('archiveModal').classList.remove('show');
 });
+
+// ---- Archive dropdown change handler ----
+// Watches the #archiveDays select for changes.
+// When the special sentinel value "delete_all" is chosen:
+//   • Shows the permanent-deletion warning message in red.
+//   • Renames the confirm button to "Delete Permanently".
+//   • Applies the .btn-confirm--danger class to turn it red.
+// When any duration option (30 / 60 / 90 / 180 days or 1 year) is chosen:
+//   • Hides the warning message.
+//   • Restores the original "Archive & Remove" label.
+//   • Removes the danger class so the button returns to its normal style.
+document.getElementById('archiveDays').addEventListener('change', (e) => {
+  const confirmBtn = document.getElementById('archiveConfirm');
+  const permWarn   = document.getElementById('archivePermWarn');
+  const isDeleteAll = e.target.value === 'delete_all';
+
+  if (isDeleteAll) {
+    // Destructive mode: make the button visually alarming and show the warning
+    confirmBtn.textContent = 'Delete Permanently';
+    confirmBtn.classList.add('btn-confirm--danger');
+    permWarn.style.display = 'block';
+  } else {
+    // Standard archive mode: restore the original button and hide the warning
+    confirmBtn.textContent = 'Archive & Remove';
+    confirmBtn.classList.remove('btn-confirm--danger');
+    permWarn.style.display = 'none';
+  }
+});
+
+// ---- Archive confirm handler ----
+// Runs when the user clicks "Archive & Remove" or "Delete Permanently".
+// Branches on the selected dropdown value:
+//   "delete_all"  → calls DELETE /api/settings/activity-logs to wipe every log
+//   any number    → calls POST  /api/settings/activity-logs/archive with { days }
+//                   to remove only logs older than the chosen duration
 document.getElementById('archiveConfirm').addEventListener('click', async () => {
   const days = document.getElementById('archiveDays').value;
+
+  // ---- Branch: Delete Permanently ----
+  // The "delete_all" value is a front-end sentinel — we call the
+  // existing clear endpoint instead of the archive endpoint.
+  if (days === 'delete_all') {
+    // Extra confirmation step because this action deletes every log entry
+    if (!confirm('Delete ALL activity logs permanently? This cannot be undone.')) return;
+
+    try {
+      const res  = await fetch('/api/settings/activity-logs', { method: 'DELETE' });
+      const data = await res.json();
+
+      // Close the modal and reset the dropdown back to the 90-day default
+      document.getElementById('archiveModal').classList.remove('show');
+      document.getElementById('archiveDays').value = '90';
+
+      // Reset the confirm button back to its normal style after closing
+      const confirmBtn = document.getElementById('archiveConfirm');
+      confirmBtn.textContent = 'Archive & Remove';
+      confirmBtn.classList.remove('btn-confirm--danger');
+      document.getElementById('archivePermWarn').style.display = 'none';
+
+      if (res.ok) {
+        alPage = 1;
+        loadActivityLogs();
+        showToast('All activity logs permanently deleted.');
+      } else {
+        showToast(data.error || 'Failed to delete logs.', 'error');
+      }
+    } catch {
+      showToast('Server error.', 'error');
+    }
+
+    return; // stop here — do not fall through to the archive branch below
+  }
+
+  // ---- Branch: Archive by duration (30 / 60 / 90 / 180 days or 1 year) ----
+  // Sends the number of days to the archive endpoint which deletes only
+  // logs older than that threshold.
   try {
     const res  = await fetch('/api/settings/activity-logs/archive', {
       method: 'POST',
@@ -688,7 +824,9 @@ document.getElementById('archiveConfirm').addEventListener('click', async () => 
       body: JSON.stringify({ days: parseInt(days) })
     });
     const data = await res.json();
+
     document.getElementById('archiveModal').classList.remove('show');
+
     if (res.ok) {
       alPage = 1;
       loadActivityLogs();
