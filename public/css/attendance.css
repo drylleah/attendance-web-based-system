@@ -755,3 +755,324 @@ html, body {
   color: var(--red-text);
   border: 1px solid #fca5a5;
 }
+
+/* ============================================================
+   TOPBAR — Manual Log button
+   ============================================================ */
+.topbar-manual-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.topbar-manual-btn:hover {
+  background: rgba(255,255,255,0.25);
+  border-color: rgba(255,255,255,0.6);
+}
+.topbar-manual-btn svg { width: 16px; height: 16px; }
+
+/* ============================================================
+   MANUAL LOG MODAL — overlay
+   ============================================================ */
+.ml-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.ml-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ============================================================
+   MANUAL LOG MODAL — container
+   ============================================================ */
+.ml-modal {
+  background: #fff;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 620px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  overflow: hidden;
+  transform: translateY(16px) scale(0.98);
+  transition: transform 0.22s ease;
+}
+.ml-overlay.show .ml-modal {
+  transform: translateY(0) scale(1);
+}
+
+/* Header */
+.ml-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 0;
+  flex-shrink: 0;
+}
+.ml-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.ml-header-left svg { width: 20px; height: 20px; color: var(--amber-main); }
+
+.ml-close {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: #fff;
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.ml-close:hover { background: #f3f4f6; color: var(--text-dark); }
+.ml-close svg { width: 16px; height: 16px; }
+
+/* Notice banner */
+.ml-notice {
+  display: flex;
+  gap: 10px;
+  margin: 16px 24px 0;
+  padding: 11px 14px;
+  background: var(--amber-light);
+  border: 1.5px solid #fde68a;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--amber-text);
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+.ml-notice svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; }
+
+/* Body */
+.ml-body {
+  padding: 20px 24px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* ============================================================
+   Time In / Time Out toggle
+   ============================================================ */
+.ml-toggle-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ml-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: #f9fafb;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ml-toggle svg { width: 18px; height: 18px; }
+.ml-toggle:hover { border-color: #d1d5db; color: var(--text-dark); background: #f3f4f6; }
+
+/* Time In active state — green */
+.ml-toggle--active {
+  background: var(--green-light);
+  border-color: var(--green-main);
+  color: var(--green-text);
+}
+.ml-toggle--active:hover {
+  background: #bbf7d0;
+  border-color: var(--green-main);
+  color: var(--green-text);
+}
+
+/* Time Out active state — blue */
+.ml-toggle--active-out {
+  background: var(--blue-light);
+  border-color: var(--blue-main);
+  color: var(--blue-text);
+}
+.ml-toggle--active-out:hover {
+  background: #bae6fd;
+  border-color: var(--blue-main);
+  color: var(--blue-text);
+}
+
+/* ============================================================
+   Form rows & fields
+   ============================================================ */
+.ml-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.ml-form-row--three {
+  grid-template-columns: 1fr 1fr 72px;
+}
+
+.ml-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.ml-field label {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #374151;
+}
+.ml-required { color: var(--red-main); }
+.ml-optional  { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--text-muted); font-size: 11px; }
+
+.ml-field input {
+  padding: 10px 13px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-family: var(--font);
+  color: var(--text-dark);
+  background: #fafafa;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.ml-field input::placeholder { color: var(--text-muted); }
+.ml-field input:focus {
+  border-color: var(--green-main);
+  box-shadow: 0 0 0 3px rgba(30,95,78,0.10);
+  background: #fff;
+}
+
+/* Error box */
+.ml-form-error {
+  display: none;
+  padding: 9px 14px;
+  background: var(--red-light);
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--red-text);
+  margin-bottom: 14px;
+}
+.ml-form-error.show { display: block; }
+
+/* ============================================================
+   Submit button — two colour variants
+   ============================================================ */
+.ml-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  margin-top: 4px;
+  color: #fff;
+}
+.ml-submit-btn:active  { transform: scale(0.99); }
+.ml-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.ml-submit-btn svg { width: 17px; height: 17px; }
+
+.ml-submit-btn--in,
+.ml-submit-btn:not(.ml-submit-btn--out) {
+  background: var(--green-main);
+}
+.ml-submit-btn--in:hover  { background: #174539; }
+
+.ml-submit-btn--out { background: var(--blue-main); }
+.ml-submit-btn--out:hover { background: #0284c7; }
+
+/* ============================================================
+   Spinner (inside submit button while saving)
+   ============================================================ */
+.ml-spinner {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ml-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes ml-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   Toast inside modal
+   ============================================================ */
+.ml-toast {
+  margin: 0 24px 16px;
+  padding: 11px 16px;
+  border-radius: 9px;
+  font-size: 13.5px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  text-align: center;
+  flex-shrink: 0;
+}
+.ml-toast.show-success {
+  opacity: 1;
+  background: var(--green-light);
+  color: var(--green-text);
+  border: 1px solid #bbf7d0;
+}
+.ml-toast.show-error {
+  opacity: 1;
+  background: var(--red-light);
+  color: var(--red-text);
+  border: 1px solid #fca5a5;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+@media (max-width: 540px) {
+  .ml-form-row,
+  .ml-form-row--three { grid-template-columns: 1fr; }
+  .ml-toggle-row { flex-direction: column; }
+  .topbar-manual-btn span { display: none; }
+}

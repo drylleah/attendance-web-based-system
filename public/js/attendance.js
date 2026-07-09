@@ -359,3 +359,150 @@ document.getElementById('cmSearch').addEventListener('input', (e) => {
     c.first_name.toLowerCase().includes(q)
   ));
 });
+
+// ================================================================
+//  MANUAL LOG MODAL
+// ================================================================
+
+const mlOverlay    = document.getElementById('manualLogOverlay');
+const openMlBtn    = document.getElementById('openManualLog');
+const closeMlBtn   = document.getElementById('closeManualLog');
+const mlToast      = document.getElementById('mlToast');
+const mlError      = document.getElementById('mlError');
+const mlSubmitBtn  = document.getElementById('mlSubmitBtn');
+const mlToggleIn   = document.getElementById('mlToggleIn');
+const mlToggleOut  = document.getElementById('mlToggleOut');
+
+let mlLogType = 'time_in';
+
+// -- Open / Close --
+openMlBtn.addEventListener('click', () => {
+  mlOverlay.classList.add('show');
+  resetMlForm();
+  document.getElementById('ml_last_name').focus();
+});
+
+closeMlBtn.addEventListener('click', closeMlModal);
+mlOverlay.addEventListener('click', (e) => { if (e.target === mlOverlay) closeMlModal(); });
+
+function closeMlModal() {
+  mlOverlay.classList.remove('show');
+}
+
+function resetMlForm() {
+  ['ml_last_name', 'ml_first_name', 'ml_mi', 'ml_id_number']
+    .forEach(id => { document.getElementById(id).value = ''; });
+  clearMlError();
+  setMlLogType('time_in');
+}
+
+// -- Log Type Toggle --
+function setMlLogType(type) {
+  mlLogType = type;
+
+  mlToggleIn.classList.toggle('ml-toggle--active',     type === 'time_in');
+  mlToggleIn.classList.toggle('ml-toggle--active-out', false);
+  mlToggleOut.classList.toggle('ml-toggle--active',    false);
+  mlToggleOut.classList.toggle('ml-toggle--active-out', type === 'time_out');
+
+  // Update submit button label and icon
+  if (type === 'time_in') {
+    mlSubmitBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+      Save Time In`;
+    mlSubmitBtn.className = 'ml-submit-btn ml-submit-btn--in';
+  } else {
+    mlSubmitBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+      </svg>
+      Save Time Out`;
+    mlSubmitBtn.className = 'ml-submit-btn ml-submit-btn--out';
+  }
+}
+
+mlToggleIn.addEventListener('click',  () => setMlLogType('time_in'));
+mlToggleOut.addEventListener('click', () => setMlLogType('time_out'));
+
+// -- Error helpers --
+function showMlError(msg) {
+  mlError.textContent = msg;
+  mlError.classList.add('show');
+}
+function clearMlError() {
+  mlError.textContent = '';
+  mlError.classList.remove('show');
+}
+
+// -- Toast --
+let mlToastTimer;
+function showMlToast(msg, type = 'success') {
+  mlToast.textContent = msg;
+  mlToast.className   = `ml-toast show-${type}`;
+  clearTimeout(mlToastTimer);
+  mlToastTimer = setTimeout(() => { mlToast.className = 'ml-toast'; }, 3500);
+}
+
+// -- Submit --
+mlSubmitBtn.addEventListener('click', async () => {
+  clearMlError();
+
+  const last_name     = document.getElementById('ml_last_name').value.trim();
+  const first_name    = document.getElementById('ml_first_name').value.trim();
+  const middle_initial = document.getElementById('ml_mi').value.trim();
+  const id_number     = document.getElementById('ml_id_number').value.trim().toUpperCase();
+
+  if (!last_name)  { showMlError('Last Name is required.');        return; }
+  if (!first_name) { showMlError('First Name is required.');       return; }
+  if (!id_number)  { showMlError('School ID Number is required.'); return; }
+
+  mlSubmitBtn.disabled = true;
+  const originalHtml   = mlSubmitBtn.innerHTML;
+  mlSubmitBtn.innerHTML = `<span class="ml-spinner"></span> Saving…`;
+
+  try {
+    const res  = await fetch('/api/attendance/manual', {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]').content,
+      },
+      body: JSON.stringify({
+        id_number,
+        last_name,
+        first_name,
+        middle_initial: middle_initial || null,
+        log_type: mlLogType,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      const actionLabel = mlLogType === 'time_in' ? 'Time In' : 'Time Out';
+      showMlToast(`${actionLabel} saved for ${data.full_name} at ${data.time}`);
+
+      // Clear form fields but keep modal open for the next entry
+      ['ml_last_name', 'ml_first_name', 'ml_mi', 'ml_id_number']
+    .forEach(id => { document.getElementById(id).value = ''; });
+  clearMlError();
+  document.getElementById('ml_last_name').focus();
+    } else {
+      showMlError(data.error || 'Failed to save. Please try again.');
+    }
+  } catch {
+    showMlError('Cannot reach the server. Check your connection.');
+  } finally {
+    mlSubmitBtn.disabled  = false;
+    mlSubmitBtn.innerHTML = originalHtml;
+  }
+});
+
+// Allow Enter key on any input to trigger submit
+['ml_last_name', 'ml_first_name', 'ml_mi', 'ml_id_number'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') mlSubmitBtn.click();
+  });
+});

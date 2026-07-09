@@ -231,6 +231,102 @@ class AttendanceController extends Controller
     }
 
     // ---------------------------------------------------------------
+    // POST /api/attendance/manual  — PUBLIC (no login required)
+    //
+    // Power-outage / RFID-offline fallback.  Allows a staff member to
+    // manually log a student's time-in or time-out directly from the
+    // kiosk page without an admin session.
+    //
+    // Required fields: id_number, last_name, first_name, log_type ('time_in' | 'time_out')
+    // Optional fields: middle_initial, remarks
+    // The date and time are always set to NOW on the server so the
+    // record cannot be backdated from the kiosk.
+    // ---------------------------------------------------------------
+    public function manualLog(Request $request): JsonResponse
+    {
+        $idNumber      = trim(strtoupper($request->input('id_number', '')));
+        $lastName      = trim($request->input('last_name', ''));
+        $firstName     = trim($request->input('first_name', ''));
+        $middleInitial = trim($request->input('middle_initial', ''));
+        $logType       = $request->input('log_type', 'time_in'); // 'time_in' or 'time_out'
+        $remarks       = trim($request->input('remarks', ''));
+
+        // Validate required fields
+        if (! $idNumber || ! $lastName || ! $firstName) {
+            return response()->json(
+                ['error' => 'ID Number, Last Name, and First Name are required.'], 400
+            );
+        }
+
+        if (! in_array($logType, ['time_in', 'time_out'])) {
+            return response()->json(
+                ['error' => 'log_type must be "time_in" or "time_out".'], 400
+            );
+        }
+
+        $now     = now();
+        $dateStr = $now->toDateString();
+        $nowDt   = $now->format('Y-m-d H:i:s');
+
+        if ($logType === 'time_in') {
+            // Create a new time-in record
+            Attendance::create([
+                'id_number'      => $idNumber,
+                'last_name'      => $lastName,
+                'first_name'     => $firstName,
+                'middle_initial' => $middleInitial ?: null,
+                'time_in'        => $nowDt,
+                'time_out'       => null,
+                'date'           => $dateStr,
+                'remarks'        => $remarks ?: 'Manual log (power outage)',
+            ]);
+        } else {
+            // Find the latest open record for this student today and close it
+            $open = Attendance::where('id_number', $idNumber)
+                              ->whereDate('date', $dateStr)
+                              ->whereNull('time_out')
+                              ->orderByDesc('time_in')
+                              ->first();
+
+            if ($open) {
+                $open->update(['time_out' => $nowDt]);
+            } else {
+                // No open record — create a complete row with both times equal
+                Attendance::create([
+                    'id_number'      => $idNumber,
+                    'last_name'      => $lastName,
+                    'first_name'     => $firstName,
+                    'middle_initial' => $middleInitial ?: null,
+                    'time_in'        => $nowDt,
+                    'time_out'       => $nowDt,
+                    'date'           => $dateStr,
+                    'remarks'        => $remarks ?: 'Manual log (power outage) — no open time-in found',
+                ]);
+            }
+        }
+
+        ActivityLogger::log(
+            $request,
+            'MANUAL_LOG',
+            'attendance',
+            "Manual {$logType} logged for {$firstName} {$lastName} ({$idNumber}) on {$dateStr}",
+            $remarks ?: null
+        );
+
+        $mi       = $middleInitial ? ' ' . $middleInitial . '.' : '';
+        $fullName = "{$firstName}{$mi} {$lastName}";
+
+        return response()->json([
+            'success'   => true,
+            'action'    => $logType,
+            'full_name' => $fullName,
+            'id_number' => $idNumber,
+            'time'      => $now->format('h:i A'),
+            'date'      => $dateStr,
+        ]);
+    }
+
+    // ---------------------------------------------------------------
     // DELETE /api/attendance/clear  (wipe entire table)
     //
     // Removes every row from the attendance table without archiving.

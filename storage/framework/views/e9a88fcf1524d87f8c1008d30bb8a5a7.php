@@ -18,6 +18,10 @@
       <span class="topbar-title">Lorma Colleges Attendance System</span>
     </div>
     <div class="topbar-right">
+      <button class="topbar-manual-btn" id="openManualLog" title="Manual Log">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>
+        Manual Log
+      </button>
       <button class="topbar-manage-btn" id="openCardManager" title="Manage ID's">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" /></svg>
         Manage ID's
@@ -97,6 +101,70 @@
     <span>Lorma Colleges &mdash; Attendance System</span>
     <span id="footerCardId"></span>
   </footer>
+
+  <!-- ===== MANUAL LOG MODAL ===== -->
+  <div class="ml-overlay" id="manualLogOverlay">
+    <div class="ml-modal">
+
+      <div class="ml-header">
+        <div class="ml-header-left">
+          <span>Manual Attendance Log</span>
+        </div>
+        <button class="ml-close" id="closeManualLog" aria-label="Close">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+<div class="ml-body">
+
+        <!-- Log Type Toggle -->
+        <div class="ml-toggle-row">
+          <button class="ml-toggle ml-toggle--active" id="mlToggleIn"  data-type="time_in">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+            Time In
+          </button>
+          <button class="ml-toggle" id="mlToggleOut" data-type="time_out">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" /></svg>
+            Time Out
+          </button>
+        </div>
+
+        <!-- Name Row -->
+        <div class="ml-form-row ml-form-row--three">
+          <div class="ml-field">
+            <label>Last Name <span class="ml-required">*</span></label>
+            <input type="text" id="ml_last_name" maxlength="100" placeholder="e.g. Dela Cruz">
+          </div>
+          <div class="ml-field">
+            <label>First Name <span class="ml-required">*</span></label>
+            <input type="text" id="ml_first_name" maxlength="100" placeholder="e.g. Juan">
+          </div>
+          <div class="ml-field ml-field--mi">
+            <label>M.I.</label>
+            <input type="text" id="ml_mi" maxlength="5" placeholder="A">
+          </div>
+        </div>
+
+        <!-- ID Row -->
+        <div class="ml-form-row">
+          <div class="ml-field">
+            <label>School ID Number <span class="ml-required">*</span></label>
+            <input type="text" id="ml_id_number" maxlength="50" autocomplete="off" placeholder="e.g. 2024-00123">
+          </div>
+        </div>
+
+        <div class="ml-form-error" id="mlError"></div>
+
+        <button class="ml-submit-btn" id="mlSubmitBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+          Save Time In
+        </button>
+
+      </div><!-- /.ml-body -->
+
+      <div class="ml-toast" id="mlToast"></div>
+    </div>
+  </div>
 
   <!-- ===== CARD MANAGER MODAL ===== -->
   <div class="cm-overlay" id="cardManagerOverlay">

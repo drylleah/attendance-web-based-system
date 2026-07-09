@@ -42,8 +42,14 @@ Route::prefix('auth')->group(function () {
 // ==========================================================================
 // ATTENDANCE  —  /api/attendance/*
 // Manages the "live" attendance table (records not yet archived).
-// All endpoints require an active admin session.
+// The /manual endpoint is PUBLIC so the kiosk can accept manual entries
+// without an admin being logged in (power-outage fallback).
+// All other endpoints require an active admin session.
 // ==========================================================================
+
+// Public — kiosk manual log (no login required)
+Route::post('attendance/manual', [AttendanceController::class, 'manualLog']);
+
 Route::prefix('attendance')->middleware('auth.session')->group(function () {
     Route::get('/',         [AttendanceController::class, 'index']);   // list with optional ?search=
     Route::post('/',        [AttendanceController::class, 'store']);   // manually add a record
