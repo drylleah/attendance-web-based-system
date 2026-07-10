@@ -15,7 +15,7 @@
   <!-- ===== TOP BAR ===== -->
   <header class="topbar">
     <div class="topbar-left">
-      <span class="topbar-title">Lorma Colleges Attendance System</span>
+      <span class="topbar-title">CHS Monitoring Simulator</span>
     </div>
     <div class="topbar-right">
       <button class="topbar-manual-btn" id="openManualLog" title="Manual Log">
