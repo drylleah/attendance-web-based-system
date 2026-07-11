@@ -312,7 +312,7 @@ document.getElementById('btnExport').addEventListener('click', () => {
 // ---- New Entry Modal ----
 document.getElementById('btnNewEntry').addEventListener('click', () => {
   const now = new Date();
-  document.getElementById('f_timein').value  = now.toTimeString().slice(0, 8);
+  document.getElementById('f_timein').value  = now.toTimeString().slice(0, 5);
   document.getElementById('f_timeout').value = '';
   document.getElementById('f_date').value    = now.toISOString().slice(0, 10);
   document.getElementById('f_id').value    = '';

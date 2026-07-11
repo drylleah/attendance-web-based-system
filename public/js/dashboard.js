@@ -87,7 +87,7 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 function updateClock() {
   const now = new Date();
   const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' };
-  const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+  const timeOpts = { hour: '2-digit', minute: '2-digit', hour12: true };
   liveDate.textContent = now.toLocaleDateString('en-US', dateOpts);
   liveTime.textContent = now.toLocaleTimeString('en-US', timeOpts);
 }
@@ -143,7 +143,7 @@ function formatTime(datetime) {
   if (!datetime) return null;
   const d = new Date(datetime);
   if (isNaN(d)) return null;
-  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
 function formatDate(datetime) {
@@ -343,7 +343,7 @@ document.getElementById('btnNew').addEventListener('click', () => {
   const hh = String(now.getHours()).padStart(2, '0');
   const mm = String(now.getMinutes()).padStart(2, '0');
   const ss = String(now.getSeconds()).padStart(2, '0');
-  document.getElementById('f_timein').value = `${hh}:${mm}:${ss}`;
+  document.getElementById('f_timein').value = `${hh}:${mm}`;
   document.getElementById('f_timeout').value = '';
   document.getElementById('f_date').value = now.toISOString().slice(0, 10);
   document.getElementById('f_id').value = '';
