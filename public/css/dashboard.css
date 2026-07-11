@@ -458,6 +458,7 @@ tbody tr:hover { background: #f0f9f5; }
 tbody td {
   padding: 11px 14px;
   color: var(--text-dark);
+  font-weight: 400;
   vertical-align: top;
 }
 tbody td.center { text-align: center; }
@@ -468,14 +469,14 @@ tbody td.center { text-align: center; }
   font-weight: 600;
 }
 .id-link {
-  color: var(--green-main);
+  color: var(--text-dark);
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
 }
 .id-link:hover { text-decoration: underline; }
-.time-block .time { font-weight: 500; }
-.time-block .ampm { font-size: 11px; color: var(--text-muted); }
+.time-block .time { font-weight: 700; }
+.time-block .ampm { font-size: 11px; font-weight: 700; color: var(--text-muted); }
 .time-empty { color: var(--text-muted); font-size: 12px; }
 
 /* Checkbox */
@@ -658,3 +659,264 @@ tr.clickable-row { cursor: default; }
 .btn-report-submit:hover {
   background: #b45309 !important;
 }
+
+/* ============================================================
+   DTR MODAL
+   ============================================================ */
+.dtr-overlay {
+  z-index: 300;
+}
+.dtr-modal {
+  max-width: 680px;
+  width: 100%;
+  padding: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 88vh;
+}
+
+/* Header */
+.dtr-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 22px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.dtr-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.3;
+}
+.dtr-modal-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.dtr-close-btn {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Filters row */
+.dtr-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: #fafafa;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+.dtr-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dtr-filter-group label {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+}
+.dtr-select {
+  padding: 7px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  font-size: 13px;
+  font-family: var(--font);
+  color: var(--text-dark);
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.dtr-select:focus { border-color: var(--green-main); }
+input.dtr-select { width: 90px; }
+
+.dtr-load-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: var(--green-main);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: background 0.15s;
+  align-self: flex-end;
+}
+.dtr-load-btn:hover    { background: var(--green-hover); }
+.dtr-load-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.dtr-load-btn svg      { width: 14px; height: 14px; }
+
+/* Table wrapper */
+.dtr-table-wrap {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* DTR table — scoped so it doesn't bleed into the page table */
+.dtr-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.dtr-table thead tr { background: #f9fafb; position: sticky; top: 0; z-index: 1; }
+.dtr-table thead th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.dtr-table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.1s;
+}
+.dtr-table tbody tr:last-child { border-bottom: none; }
+.dtr-table tbody tr:hover      { background: #f0f9f5; }
+.dtr-table tbody td {
+  padding: 11px 16px;
+  color: var(--text-dark);
+  font-weight: 400;
+  vertical-align: middle;
+}
+
+.dtr-day     { font-weight: 500; color: var(--text-body); min-width: 90px; }
+.dtr-date    { color: var(--text-body); white-space: nowrap; }
+.dtr-time    { white-space: nowrap; }
+.dtr-time--out { color: var(--text-body); }
+.dtr-remarks { color: var(--text-muted); font-size: 12px; }
+
+/* Empty & loading states */
+.dtr-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.dtr-empty svg { width: 36px; height: 36px; opacity: 0.3; }
+.dtr-empty p   { font-size: 13.5px; }
+
+.dtr-loading {
+  padding: 40px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+.dtr-spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid #e5e7eb;
+  border-top-color: var(--green-main);
+  border-radius: 50%;
+  animation: dtr-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes dtr-spin { to { transform: rotate(360deg); } }
+
+/* DTR row button */
+.btn-dtr-row {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 6px;
+  border: 1.5px solid #d1d5db;
+  background: #fff; color: #9ca3af;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.btn-dtr-row:hover {
+  background: var(--green-light);
+  color: var(--green-main);
+  border-color: var(--green-main);
+}
+
+/* DTR calendar rows */
+.dtr-table tbody tr.dtr-weekend { background: #f9fafb; }
+.dtr-table tbody tr.dtr-weekend .dtr-day { color: #9ca3af; }
+.dtr-table tbody tr.dtr-no-record td { color: #d1d5db; }
+.dtr-table tbody tr.dtr-no-record .dtr-day { color: #d1d5db; font-weight: 400; }
+.dtr-table tbody tr.dtr-weekend.dtr-no-record td { color: #e5e7eb; }
+
+/* DTR week header row */
+.dtr-table tbody tr.dtr-week-header td {
+  background: var(--green-main);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 16px;
+  letter-spacing: 0.3px;
+}
+.dtr-table tbody tr.dtr-out-of-month td {
+  color: #e5e7eb;
+  background: #fafafa;
+}
+
+/* DTR — current week header gets a distinct accent */
+.dtr-table tbody tr.dtr-week-current td {
+  background: #0f766e;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+/* Future days inside current week */
+.dtr-table tbody tr.dtr-future td {
+  color: #e5e7eb;
+  font-style: italic;
+}
+
+/* DTR — inline "This Week" tag inside header */
+.dtr-this-week-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  background: rgba(255,255,255,0.22);
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* DTR — per-week column sub-header */
+.dtr-table tbody tr.dtr-col-header th {
+  padding: 6px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: #f3f4f6;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+/* DTR date column */
+.dtr-date-col { color: var(--text-body); white-space: nowrap; font-size: 13px; }
+
+/* DTR custom year input (shown when "Custom…" is selected) */
+.dtr-year-custom { margin-top: 6px; width: 90px; }

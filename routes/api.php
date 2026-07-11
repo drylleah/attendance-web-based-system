@@ -51,6 +51,7 @@ Route::prefix('auth')->group(function () {
 Route::post('attendance/manual', [AttendanceController::class, 'manualLog']);
 
 Route::prefix('attendance')->middleware('auth.session')->group(function () {
+    Route::get('/dtr',      [AttendanceController::class, 'dtr']);      // ⚠ before /{id}
     Route::get('/',         [AttendanceController::class, 'index']);   // list with optional ?search=
     Route::post('/',        [AttendanceController::class, 'store']);   // manually add a record
     Route::put('/{id}',     [AttendanceController::class, 'update'])->where('id', '[0-9]+');  // edit by ID
@@ -64,6 +65,7 @@ Route::prefix('attendance')->middleware('auth.session')->group(function () {
 // All endpoints require an active admin session.
 // ==========================================================================
 Route::prefix('timerecord')->middleware('auth.session')->group(function () {
+    Route::get('/dtr',     [TimeRecordController::class, 'dtr']);      // ⚠ before /{id}
     Route::get('/',        [TimeRecordController::class, 'index']);   // list with search, date range, month
     Route::post('/',       [TimeRecordController::class, 'store']);   // manually add a record
     Route::post('/save',   [TimeRecordController::class, 'save']);    // ⚠ must be BEFORE /{id} — copy attendance → time_records

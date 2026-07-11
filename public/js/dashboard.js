@@ -87,7 +87,7 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 function updateClock() {
   const now = new Date();
   const dateOpts = { year: 'numeric', month: 'long', day: 'numeric' };
-  const timeOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+  const timeOpts = { hour: '2-digit', minute: '2-digit', hour12: true };
   liveDate.textContent = now.toLocaleDateString('en-US', dateOpts);
   liveTime.textContent = now.toLocaleTimeString('en-US', timeOpts);
 }
@@ -143,7 +143,7 @@ function formatTime(datetime) {
   if (!datetime) return null;
   const d = new Date(datetime);
   if (isNaN(d)) return null;
-  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
 function formatDate(datetime) {
@@ -177,7 +177,7 @@ function renderTable(records) {
     tr.title = 'Click to edit this record';
     tr.innerHTML = `
       <td class="row-check"><input type="checkbox" class="row-cb" data-id="${rec.id}"></td>
-      <td><span class="id-link">${rec.id_number || '—'}</span></td>
+      <td>${rec.id_number || '—'}</td>
       <td>${rec.last_name || '—'}</td>
       <td>${rec.first_name || '—'}</td>
       <td>${rec.middle_initial || '—'}</td>
@@ -195,6 +195,9 @@ function renderTable(records) {
       <td class="td-remarks">${rec.remarks ? `<span class="remarks-text">${rec.remarks}</span>` : '<span class="remarks-empty">—</span>'}</td>
       <td>
         <div class="row-actions">
+          <button class="btn-dtr-row" title="View DTR">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" width="15" height="15"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5m-9-3h.008v.008H12V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
+          </button>
           <button class="btn-report-row" data-id="${rec.id}" title="Report incident">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" width="15" height="15"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
           </button>
@@ -243,7 +246,7 @@ function toTimeInput(dt) {
   if (!dt) return '';
   const d = new Date(dt);
   if (isNaN(d)) return '';
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 function toDateInput(dt) {
   if (!dt) return '';
@@ -343,7 +346,7 @@ document.getElementById('btnNew').addEventListener('click', () => {
   const hh = String(now.getHours()).padStart(2, '0');
   const mm = String(now.getMinutes()).padStart(2, '0');
   const ss = String(now.getSeconds()).padStart(2, '0');
-  document.getElementById('f_timein').value = `${hh}:${mm}:${ss}`;
+  document.getElementById('f_timein').value = `${hh}:${mm}`;
   document.getElementById('f_timeout').value = '';
   document.getElementById('f_date').value = now.toISOString().slice(0, 10);
   document.getElementById('f_id').value = '';
@@ -492,4 +495,293 @@ document.getElementById('reportSubmit').addEventListener('click', async () => {
   } catch {
     showToast('Server error. Please try again.', 'error');
   }
+});
+
+// ================================================================
+//  DTR MODAL — Dashboard (uses /api/attendance/dtr)
+// ================================================================
+
+const dtrOverlay  = document.getElementById('dtrOverlay');
+const dtrClose    = document.getElementById('dtrClose');
+const dtrTitle    = document.getElementById('dtrTitle');
+const dtrSub      = document.getElementById('dtrSub');
+const dtrMonth    = document.getElementById('dtrMonth');
+const dtrYear     = document.getElementById('dtrYear');
+const dtrYearCustom = document.getElementById('dtrYearCustom');
+const dtrLoadBtn  = document.getElementById('dtrLoadBtn');
+const dtrBody     = document.getElementById('dtrBody');
+const dtrEmpty    = document.getElementById('dtrEmpty');
+const dtrLoading  = document.getElementById('dtrLoading');
+
+let dtrCurrentId = null;
+
+const MONTH_NAMES = ['January','February','March','April','May','June',
+                     'July','August','September','October','November','December'];
+const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// Pre-select current month/year when modal opens
+function dtrSetCurrentPeriod() {
+  const now         = new Date();
+  const currentYear = now.getFullYear();
+
+  // Populate year dropdown from 2024 to current year, plus "Custom..." option
+  dtrYear.innerHTML = '';
+  for (let y = 2024; y <= currentYear; y++) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y;
+    if (y === currentYear) opt.selected = true;
+    dtrYear.appendChild(opt);
+  }
+  const customOpt = document.createElement('option');
+  customOpt.value = 'custom';
+  customOpt.textContent = 'Custom…';
+  dtrYear.appendChild(customOpt);
+
+  dtrMonth.value = now.getMonth() + 1;
+  dtrYearCustom.style.display = 'none';
+}
+
+// Show/hide custom year input
+dtrYear.addEventListener('change', () => {
+  if (dtrYear.value === 'custom') {
+    dtrYearCustom.style.display = 'block';
+    dtrYearCustom.focus();
+  } else {
+    dtrYearCustom.style.display = 'none';
+  }
+});
+
+function getSelectedYear() {
+  return dtrYear.value === 'custom'
+    ? parseInt(dtrYearCustom.value) || null
+    : parseInt(dtrYear.value);
+}
+
+function openDtrModal(idNumber, name) {
+  dtrCurrentId = idNumber;
+  dtrTitle.textContent = `DTR — ${name || idNumber}`;
+  dtrSub.textContent   = '';
+  dtrSetCurrentPeriod();
+  dtrBody.innerHTML    = '';
+  dtrEmpty.style.display   = 'none';
+  dtrLoading.style.display = 'none';
+  dtrOverlay.classList.add('show');
+  fetchDtr();
+}
+
+dtrClose.addEventListener('click', () => dtrOverlay.classList.remove('show'));
+dtrOverlay.addEventListener('click', (e) => {
+  if (e.target === dtrOverlay) dtrOverlay.classList.remove('show');
+});
+
+dtrLoadBtn.addEventListener('click', fetchDtr);
+dtrYearCustom.addEventListener('keydown', (e) => { if (e.key === 'Enter') fetchDtr(); });
+
+async function fetchDtr() {
+  if (!dtrCurrentId) return;
+
+  const month = dtrMonth.value;
+  const year  = getSelectedYear();
+
+  if (!year) {
+    showToast('Please enter a valid year.', 'error');
+    return;
+  }
+
+  dtrBody.innerHTML        = '';
+  dtrEmpty.style.display   = 'none';
+  dtrLoading.style.display = 'flex';
+  dtrLoadBtn.disabled      = true;
+
+  try {
+    const params = new URLSearchParams({ id_number: dtrCurrentId, month, year });
+    const res    = await fetch(`/api/attendance/dtr?${params}`);
+    const data   = await res.json();
+
+    dtrLoading.style.display = 'none';
+    dtrLoadBtn.disabled      = false;
+
+    if (!res.ok) { showToast(data.error || 'Failed to load DTR.', 'error'); return; }
+
+    const monthLabel = MONTH_NAMES[parseInt(month) - 1];
+    dtrSub.textContent = `${monthLabel} ${year}  ·  ID: ${dtrCurrentId}`;
+    if (data.name) dtrTitle.textContent = `DTR — ${data.name}`;
+
+    if (!data.records || data.records.length === 0) {
+      dtrEmpty.style.display = 'flex';
+      return;
+    }
+
+    renderDtrRows(data.records, parseInt(month), parseInt(year));
+  } catch {
+    dtrLoading.style.display = 'none';
+    dtrLoadBtn.disabled      = false;
+    showToast('Server error loading DTR.', 'error');
+  }
+}
+
+function renderDtrRows(records, month, year) {
+  dtrBody.innerHTML = '';
+
+  // Build lookup: YYYY-MM-DD → record
+  const recMap = {};
+  records.forEach((rec) => {
+    const key = rec.date ? rec.date.slice(0, 10) : null;
+    if (key) recMap[key] = rec;
+  });
+
+  const DAY_LABELS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  // Today's date (local, no time)
+  const today      = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Find the Monday of today's week
+  const todayMonday = new Date(today);
+  todayMonday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+
+  // Find the Monday of week 1 of the selected month
+  const firstOfMonth    = new Date(year, month - 1, 1);
+  const firstMondayOffset = (firstOfMonth.getDay() + 6) % 7;
+  const firstMonday     = new Date(year, month - 1, 1 - firstMondayOffset);
+
+  let weekNum = 0;
+
+  while (true) {
+    // Monday of this week
+    const monday = new Date(firstMonday);
+    monday.setDate(firstMonday.getDate() + weekNum * 7);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+
+    // Stop if the whole week is beyond the selected month
+    const weekHasMonthDays = (() => {
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        if (d.getFullYear() === year && d.getMonth() + 1 === month) return true;
+      }
+      return false;
+    })();
+    if (!weekHasMonthDays) break;
+
+    // Show this week if:
+    // 1. The week has already started (monday <= today), OR
+    // 2. The week contains at least one actual record (e.g. a Sunday entry
+    //    logged manually before the week's Monday arrives)
+    const weekHasRecord = (() => {
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        const mm  = String(d.getMonth() + 1).padStart(2, '0');
+        const dd  = String(d.getDate()).padStart(2, '0');
+        if (recMap[`${d.getFullYear()}-${mm}-${dd}`]) return true;
+      }
+      return false;
+    })();
+    if (monday > today && !weekHasRecord) break;
+
+    // Build the week label
+    const isCurrentWeek = monday <= today && monday.getTime() === todayMonday.getTime();
+    const rangeStart = monday.getMonth() + 1 === month && monday.getFullYear() === year
+      ? monday : new Date(year, month - 1, 1);
+    const rangeEnd   = sunday.getMonth() + 1 === month && sunday.getFullYear() === year
+      ? sunday : new Date(year, month, 0);
+    const fmt = (d) => d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const dateRange = fmt(rangeStart) === fmt(rangeEnd)
+      ? fmt(rangeStart)
+      : `${fmt(rangeStart)} – ${fmt(rangeEnd)}`;
+    const weekLabel = isCurrentWeek
+      ? `${dateRange} <span class="dtr-this-week-tag">This Week</span>`
+      : dateRange;
+
+    // Week header row
+    const headerRow = document.createElement('tr');
+    headerRow.classList.add('dtr-week-header');
+    if (isCurrentWeek) headerRow.classList.add('dtr-week-current');
+    headerRow.innerHTML = `<td colspan="5">${weekLabel}</td>`;
+    dtrBody.appendChild(headerRow);
+
+    // Sub-header: column labels for this week
+    const subHeader = document.createElement('tr');
+    subHeader.classList.add('dtr-col-header');
+    subHeader.innerHTML = `
+      <th>Day</th>
+      <th>Date</th>
+      <th>Time In</th>
+      <th>Time Out</th>
+      <th>Remarks</th>
+    `;
+    dtrBody.appendChild(subHeader);
+
+    // Render Mon–Sun, skipping days outside the selected month
+    for (let offset = 0; offset < 7; offset++) {
+      const d       = new Date(monday);
+      d.setDate(monday.getDate() + offset);
+
+      const inMonth   = d.getMonth() + 1 === month && d.getFullYear() === year;
+
+      // Skip days that belong to a different month entirely
+      if (!inMonth) continue;
+
+      const isFuture  = d > today;
+      const dayLabel  = DAY_LABELS[d.getDay()];
+      const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+
+      const mm  = String(d.getMonth() + 1).padStart(2, '0');
+      const dd  = String(d.getDate()).padStart(2, '0');
+      const key = `${d.getFullYear()}-${mm}-${dd}`;
+      const rec = recMap[key] || null;
+
+      let timeIn  = '—';
+      let timeOut = '—';
+      let remarks = '—';
+
+      if (rec) {
+        const parseTime = (raw) => {
+          if (!raw) return '—';
+          const t = new Date(raw);
+          if (isNaN(t)) return '—';
+          return t.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+        };
+        timeIn  = parseTime(rec.time_in);
+        timeOut = parseTime(rec.time_out);
+        remarks = rec.remarks || '—';
+      }
+
+      const tr = document.createElement('tr');
+      if (isWeekend)       tr.classList.add('dtr-weekend');
+      if (!rec)            tr.classList.add('dtr-no-record');
+      if (isFuture && !rec) tr.classList.add('dtr-future');
+
+      const dateLabel = rec
+        ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+        : '—';
+
+      tr.innerHTML = `
+        <td class="dtr-day">${dayLabel}</td>
+        <td class="dtr-date-col">${dateLabel}</td>
+        <td class="dtr-time">${timeIn}</td>
+        <td class="dtr-time dtr-time--out">${timeOut}</td>
+        <td class="dtr-remarks">${remarks}</td>
+      `;
+      dtrBody.appendChild(tr);
+    }
+
+    weekNum++;
+  }
+}
+
+// ---- Wire up DTR button in each attendance row ----
+// Called inside renderTable() after rows are built — we delegate via event
+attendanceBody.addEventListener('click', (e) => {
+  const btn = e.target.closest('.btn-dtr-row');
+  if (!btn) return;
+  e.stopPropagation();
+  const row = btn.closest('tr');
+  const rec = JSON.parse(row.dataset.record);
+  const mi  = rec.middle_initial ? ' ' + rec.middle_initial + '.' : '';
+  const name = `${rec.first_name}${mi} ${rec.last_name}`;
+  openDtrModal(rec.id_number, name);
 });

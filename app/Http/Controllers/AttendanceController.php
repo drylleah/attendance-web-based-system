@@ -327,6 +327,67 @@ class AttendanceController extends Controller
     }
 
     // ---------------------------------------------------------------
+    // GET /api/attendance/dtr
+    //
+    // Returns combined records from BOTH the live attendance table AND
+    // the permanent time_records archive for a specific person in a
+    // given month/year. This ensures the DTR on the Dashboard shows the
+    // full attendance history regardless of whether records have been
+    // saved to Time Record or not.
+    //
+    // Query parameters:
+    //   id_number — required
+    //   month     — integer 1–12 (required)
+    //   year      — 4-digit year (required)
+    // ---------------------------------------------------------------
+    public function dtr(Request $request): JsonResponse
+    {
+        $idNumber = trim($request->query('id_number', ''));
+        $month    = (int) $request->query('month', 0);
+        $year     = (int) $request->query('year',  0);
+
+        if (! $idNumber || ! $month || ! $year) {
+            return response()->json(['error' => 'id_number, month, and year are required.'], 400);
+        }
+
+        $cols = ['id', 'date', 'time_in', 'time_out', 'remarks',
+                 'last_name', 'first_name', 'middle_initial'];
+
+        // Live attendance records (not yet saved to Time Record)
+        $liveRecords = Attendance::where('id_number', $idNumber)
+            ->whereMonth('date', $month)
+            ->whereYear('date',  $year)
+            ->get($cols);
+
+        // Archived time records (already saved to Time Record)
+        $archivedRecords = \App\Models\TimeRecord::where('id_number', $idNumber)
+            ->whereMonth('date', $month)
+            ->whereYear('date',  $year)
+            ->get($cols);
+
+        // Merge both collections and sort by date ascending
+        $records = $liveRecords->concat($archivedRecords)
+            ->sortBy('date')
+            ->values();
+
+        // Build the person name from the first record found
+        $name = null;
+        if ($records->isNotEmpty()) {
+            $r    = $records->first();
+            $mi   = $r->middle_initial ? ' ' . $r->middle_initial . '.' : '';
+            $name = "{$r->first_name}{$mi} {$r->last_name}";
+        }
+
+        return response()->json([
+            'id_number' => $idNumber,
+            'name'      => $name,
+            'month'     => $month,
+            'year'      => $year,
+            'records'   => $records,
+        ]);
+    }
+
+    // ---------------------------------------------------------------
     // DELETE /api/attendance/clear  (wipe entire table)
     //
     // Removes every row from the attendance table without archiving.

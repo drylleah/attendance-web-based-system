@@ -230,6 +230,52 @@ class TimeRecordController extends Controller
     }
 
     // ---------------------------------------------------------------
+    // GET /api/timerecord/dtr
+    //
+    // Returns all time records for a specific person in a given month/year.
+    // Used by the DTR (Daily Time Record) modal on the Time Records page.
+    //
+    // Query parameters:
+    //   id_number — the student/staff ID to look up (required)
+    //   month     — integer 1–12 (required)
+    //   year      — 4-digit year (required)
+    // ---------------------------------------------------------------
+    public function dtr(Request $request): JsonResponse
+    {
+        $idNumber = trim($request->query('id_number', ''));
+        $month    = (int) $request->query('month', 0);
+        $year     = (int) $request->query('year',  0);
+
+        if (! $idNumber || ! $month || ! $year) {
+            return response()->json(['error' => 'id_number, month, and year are required.'], 400);
+        }
+
+        $records = TimeRecord::where('id_number', $idNumber)
+            ->whereMonth('date', $month)
+            ->whereYear('date',  $year)
+            ->orderBy('date')
+            ->orderBy('time_in')
+            ->get(['id', 'date', 'time_in', 'time_out', 'remarks',
+                   'last_name', 'first_name', 'middle_initial']);
+
+        // Build the person name from the first record
+        $name = null;
+        if ($records->isNotEmpty()) {
+            $r    = $records->first();
+            $mi   = $r->middle_initial ? ' ' . $r->middle_initial . '.' : '';
+            $name = "{$r->first_name}{$mi} {$r->last_name}";
+        }
+
+        return response()->json([
+            'id_number' => $idNumber,
+            'name'      => $name,
+            'month'     => $month,
+            'year'      => $year,
+            'records'   => $records,
+        ]);
+    }
+
+    // ---------------------------------------------------------------
     // DELETE /api/timerecord/{id}
     //
     // Deletes a single time record by its primary key.

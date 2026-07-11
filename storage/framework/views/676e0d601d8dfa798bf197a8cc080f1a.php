@@ -177,6 +177,66 @@
     </div><!-- /page-content -->
   </div><!-- /main -->
 
+  <!-- ========== DTR MODAL ========== -->
+  <div class="modal-overlay dtr-overlay" id="dtrOverlay">
+    <div class="modal dtr-modal">
+      <div class="dtr-modal-header">
+        <div class="dtr-modal-title-block">
+          <div class="dtr-modal-title" id="dtrTitle">Daily Time Record</div>
+          <div class="dtr-modal-sub" id="dtrSub">—</div>
+        </div>
+        <button class="btn-cancel dtr-close-btn" id="dtrClose">Close</button>
+      </div>
+
+      <!-- Month / Year pickers -->
+      <div class="dtr-filters">
+        <div class="dtr-filter-group">
+          <label>Month</label>
+          <select id="dtrMonth" class="dtr-select">
+            <option value="1">January</option><option value="2">February</option>
+            <option value="3">March</option><option value="4">April</option>
+            <option value="5">May</option><option value="6">June</option>
+            <option value="7">July</option><option value="8">August</option>
+            <option value="9">September</option><option value="10">October</option>
+            <option value="11">November</option><option value="12">December</option>
+          </select>
+        </div>
+        <div class="dtr-filter-group">
+          <label>Year</label>
+          <select id="dtrYear" class="dtr-select"></select>
+          <input type="number" id="dtrYearCustom" class="dtr-select dtr-year-custom" min="2000" max="2099" placeholder="e.g. 2028" style="display:none;">
+        </div>
+        <button class="dtr-load-btn" id="dtrLoadBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
+          Load
+        </button>
+      </div>
+
+      <!-- DTR Table -->
+      <div class="dtr-table-wrap">
+        <table class="dtr-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Date</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody id="dtrBody"></tbody>
+        </table>
+        <div class="dtr-empty" id="dtrEmpty" style="display:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5" /></svg>
+          <p>No records found for this month.</p>
+        </div>
+        <div class="dtr-loading" id="dtrLoading" style="display:none;">
+          <span class="dtr-spinner"></span> Loading…
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ========== NEW RECORD MODAL ========== -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
@@ -200,11 +260,11 @@
         </div>
         <div class="form-group">
           <label>Time In</label>
-          <input type="time" id="f_timein" step="1">
+          <input type="time" id="f_timein">
         </div>
         <div class="form-group">
           <label>Time Out</label>
-          <input type="time" id="f_timeout" step="1">
+          <input type="time" id="f_timeout">
         </div>
         <div class="form-group full">
           <label>Date</label>
@@ -245,11 +305,11 @@
         </div>
         <div class="form-group">
           <label>Time In</label>
-          <input type="time" id="ef_timein" step="1">
+          <input type="time" id="ef_timein">
         </div>
         <div class="form-group">
           <label>Time Out</label>
-          <input type="time" id="ef_timeout" step="1">
+          <input type="time" id="ef_timeout">
         </div>
         <div class="form-group full">
           <label>Date</label>

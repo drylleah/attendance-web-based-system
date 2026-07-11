@@ -53,7 +53,7 @@ class TimeRecord extends Model
     protected $casts = [
         'time_in'  => 'datetime',
         'time_out' => 'datetime',
-        'date'     => 'date',
+        'date'     => 'string',
         'saved_at' => 'datetime',
     ];
 }
