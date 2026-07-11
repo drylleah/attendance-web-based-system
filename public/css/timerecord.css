@@ -324,6 +324,7 @@ tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: #f8fffe; }
 tbody td { padding: 13px 16px; color: var(--text-dark); font-weight: 400; vertical-align: middle; }
 
+<<<<<<< HEAD
 .td-id { color: var(--text-dark); font-weight: 700; font-size: 13px; cursor: pointer; }
 .td-id:hover { text-decoration: underline; }
 .col-fullname { display: none; }
@@ -332,6 +333,16 @@ tbody td { padding: 13px 16px; color: var(--text-dark); font-weight: 400; vertic
 .time-in-block .ap  { font-size: 11px; color: var(--text-muted); font-weight: 700; }
 .time-out-block .t  { font-size: 13px; font-weight: 700; color: var(--text-body); line-height: 1.1; }
 .time-out-block .ap { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+=======
+.td-id { color: var(--text-dark); font-size: 13px; cursor: pointer; }
+.td-id:hover { text-decoration: underline; }
+.col-fullname { display: none; }
+
+.time-in-block .t  { font-size: 14px; font-weight: 400; color: var(--text-dark); line-height: 1.1; }
+.time-in-block .ap { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+.time-out-block .t  { font-size: 13px; color: var(--text-body); line-height: 1.1; }
+.time-out-block .ap { font-size: 11px; color: var(--text-muted); }
+>>>>>>> 3fae71c59841a9131b926bfc1b65f6c544d48c1c
 .time-empty { color: var(--text-muted); font-size: 13px; font-weight: 500; }
 
 .td-date { color: var(--text-body); font-size: 13px; }

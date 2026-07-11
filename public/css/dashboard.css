@@ -470,7 +470,11 @@ tbody td.center { text-align: center; }
 }
 .id-link {
   color: var(--text-dark);
+<<<<<<< HEAD
   font-weight: 600;
+=======
+  font-weight: 400;
+>>>>>>> 3fae71c59841a9131b926bfc1b65f6c544d48c1c
   cursor: pointer;
   text-decoration: none;
 }

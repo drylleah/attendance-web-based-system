@@ -2871,6 +2871,7 @@
 #62 C:/Users/Jemimah Zamoranos/Documents/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://Users//Jemima...')
 #63 {main}
 "} 
+<<<<<<< HEAD
 [2026-07-09 19:02:08] local.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'attendance_db.cache' doesn't exist (Connection: mysql, SQL: delete from `cache`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'attendance_db.cache' doesn't exist (Connection: mysql, SQL: delete from `cache`) at C:/Users/dhary/Herd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
 [stacktrace]
 #0 C:/Users/dhary/Herd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(779): Illuminate/Database/Connection->runQueryCallback('delete from `ca...', Array, Object(Closure))
@@ -2921,5 +2922,57 @@
 #20 C:/Users/dhary/Herd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
 #21 C:/Users/dhary/Herd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
 #22 C:/Users/dhary/Herd/attendance-web-based-system/artisan(13): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
+=======
+[2026-07-09 20:09:30] local.ERROR: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'attendance_db.cache' doesn't exist (Connection: mysql, SQL: delete from `cache`) {"exception":"[object] (Illuminate\\Database\\QueryException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'attendance_db.cache' doesn't exist (Connection: mysql, SQL: delete from `cache`) at C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php:825)
+[stacktrace]
+#0 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(779): Illuminate/Database/Connection->runQueryCallback('delete from `ca...', Array, Object(Closure))
+#1 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(584): Illuminate/Database/Connection->run('delete from `ca...', Array, Object(Closure))
+#2 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(548): Illuminate/Database/Connection->affectingStatement('delete from `ca...', Array)
+#3 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(4024): Illuminate/Database/Connection->delete('delete from `ca...', Array)
+#4 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Cache/DatabaseStore.php(422): Illuminate/Database/Query/Builder->delete()
+#5 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Cache/Repository.php(792): Illuminate/Cache/DatabaseStore->flush()
+#6 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Cache/Console/ClearCommand.php(69): Illuminate/Cache/Repository->__call('flush', Array)
+#7 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Cache/Console/ClearCommand->handle()
+#8 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#9 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#10 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#11 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#12 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate/Container/Container->call(Array)
+#13 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#14 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#15 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#16 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Cache/Console/ClearCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#17 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#18 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#19 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#20 C:/Users/dhary/Documents 3rd/attendance-web-based-system/artisan(13): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
+#21 {main}
+
+[previous exception] [object] (PDOException(code: 42S02): SQLSTATE[42S02]: Base table or view not found: 1146 Table 'attendance_db.cache' doesn't exist at C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php:592)
+[stacktrace]
+#0 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(592): PDO->prepare('delete from `ca...')
+#1 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(812): Illuminate/Database/Connection->Illuminate/Database/{closure}('delete from `ca...', Array)
+#2 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(779): Illuminate/Database/Connection->runQueryCallback('delete from `ca...', Array, Object(Closure))
+#3 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(584): Illuminate/Database/Connection->run('delete from `ca...', Array, Object(Closure))
+#4 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Connection.php(548): Illuminate/Database/Connection->affectingStatement('delete from `ca...', Array)
+#5 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Database/Query/Builder.php(4024): Illuminate/Database/Connection->delete('delete from `ca...', Array)
+#6 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Cache/DatabaseStore.php(422): Illuminate/Database/Query/Builder->delete()
+#7 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Cache/Repository.php(792): Illuminate/Cache/DatabaseStore->flush()
+#8 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Cache/Console/ClearCommand.php(69): Illuminate/Cache/Repository->__call('flush', Array)
+#9 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate/Cache/Console/ClearCommand->handle()
+#10 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate/Container/BoundMethod::Illuminate/Container/{closure}()
+#11 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(95): Illuminate/Container/Util::unwrapIfClosure(Object(Closure))
+#12 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate/Container/BoundMethod::callBoundMethod(Object(Illuminate/Foundation/Application), Array, Object(Closure))
+#13 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Container/Container.php(696): Illuminate/Container/BoundMethod::call(Object(Illuminate/Foundation/Application), Array, Array, NULL)
+#14 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Console/Command.php(213): Illuminate/Container/Container->call(Array)
+#15 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Command/Command.php(341): Illuminate/Console/Command->execute(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#16 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Console/Command.php(182): Symfony/Component/Console/Command/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Illuminate/Console/OutputStyle))
+#17 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Application.php(1117): Illuminate/Console/Command->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#18 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Application.php(356): Symfony/Component/Console/Application->doRunCommand(Object(Illuminate/Cache/Console/ClearCommand), Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#19 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/symfony/console/Application.php(195): Symfony/Component/Console/Application->doRun(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#20 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(198): Symfony/Component/Console/Application->run(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#21 C:/Users/dhary/Documents 3rd/attendance-web-based-system/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1235): Illuminate/Foundation/Console/Kernel->handle(Object(Symfony/Component/Console/Input/ArgvInput), Object(Symfony/Component/Console/Output/ConsoleOutput))
+#22 C:/Users/dhary/Documents 3rd/attendance-web-based-system/artisan(13): Illuminate/Foundation/Application->handleCommand(Object(Symfony/Component/Console/Input/ArgvInput))
+>>>>>>> 6079579 (madi met toy font ken text na sows ngem working ayos lang no bigdeal)
 #23 {main}
 "} 
