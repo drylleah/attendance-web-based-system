@@ -133,11 +133,11 @@
         <div class="ml-form-row ml-form-row--three">
           <div class="ml-field">
             <label>Last Name <span class="ml-required">*</span></label>
-            <input type="text" id="ml_last_name" maxlength="100" placeholder="e.g. Dela Cruz">
+            <input type="text" id="ml_last_name" maxlength="100" placeholder="">
           </div>
           <div class="ml-field">
             <label>First Name <span class="ml-required">*</span></label>
-            <input type="text" id="ml_first_name" maxlength="100" placeholder="e.g. Juan">
+            <input type="text" id="ml_first_name" maxlength="100" placeholder="">
           </div>
           <div class="ml-field ml-field--mi">
             <label>M.I.</label>
@@ -149,7 +149,7 @@
         <div class="ml-form-row">
           <div class="ml-field">
             <label>School ID Number <span class="ml-required">*</span></label>
-            <input type="text" id="ml_id_number" maxlength="50" autocomplete="off" placeholder="e.g. 2024-00123">
+            <input type="text" id="ml_id_number" maxlength="50" autocomplete="off" placeholder="">
           </div>
         </div>
 
