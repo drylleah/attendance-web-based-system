@@ -12,7 +12,7 @@
 </head>
 <body>
 
-  <!-- ===== TOP BAR ===== -->
+  <!-- ===== TOP BAR Hello===== -->
   <header class="topbar">
     <div class="topbar-left">
       <span class="topbar-title">CHS Monitoring Simulator</span>
